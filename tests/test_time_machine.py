@@ -9,7 +9,6 @@ import time
 import typing
 import uuid
 from contextlib import contextmanager
-from importlib.util import module_from_spec, spec_from_file_location
 from textwrap import dedent
 from unittest import SkipTest, TestCase, mock
 from zoneinfo import ZoneInfo
@@ -50,28 +49,6 @@ def change_local_timezone(local_tz: str | None) -> typing.Iterator[None]:
     finally:
         os.environ["TZ"] = orig_tz
         time.tzset()
-
-
-@pytest.mark.skipif(
-    not hasattr(time, "CLOCK_REALTIME"), reason="No time.CLOCK_REALTIME"
-)
-def test_import_without_clock_realtime():
-    orig = time.CLOCK_REALTIME
-    del time.CLOCK_REALTIME
-    try:
-        # Recipe for importing from path as documented in importlib
-        spec = spec_from_file_location(
-            f"{__name__}.time_machine_without_clock_realtime", time_machine.__file__
-        )
-        assert spec is not None
-        module = module_from_spec(spec)
-        # typeshed says exec_module does not always exist:
-        spec.loader.exec_module(module)  # type: ignore[union-attr]
-
-    finally:
-        time.CLOCK_REALTIME = orig  # type: ignore[misc]
-
-    # No assertions - testing for coverage only
 
 
 # datetime module
@@ -989,7 +966,7 @@ def test_time_machine_attribute_error(func, args):
     ):
         func(*args)
 
-    assert excinfo.value.args == (f"'tuple' object has no attribute '{func.__name__}'",)
+    assert excinfo.value.args == ("'tuple' object has no attribute 'traveller_stack'",)
 
 
 # freeezegun conflict tests

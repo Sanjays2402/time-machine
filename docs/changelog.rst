@@ -2,6 +2,9 @@
 Changelog
 =========
 
+* Move the intermediary functions that patched functions call from Python to C.
+  This reduces the overhead of calling patched functions like ``time.time()`` while time travelling, making them around 10-20% faster.
+
 * Build with frame pointers enabled, preparation for `PEP 831 <https://peps.python.org/pep-0831/>`__.
 
   `PR #627 <https://github.com/adamchainz/time-machine/issues/627>`__.
